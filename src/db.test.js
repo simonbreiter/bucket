@@ -4,10 +4,13 @@ let connection
 let db
 
 beforeEach(async () => {
-  connection = await MongoClient.connect('mongodb://myuser:example@localhost', {
-    authSource: 'admin',
-    useNewUrlParser: true
-  })
+  connection = await MongoClient.connect(
+    `mongodb://myuser:example@${process.env.HOST}`,
+    {
+      authSource: 'admin',
+      useNewUrlParser: true
+    }
+  )
   db = await connection.db('mydb')
 })
 
