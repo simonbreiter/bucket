@@ -1,0 +1,25 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  image: node:9.9.0
+  artifacts:
+    paths:
+      - dist
+  script:
+    - npm install
+    - npm run build
+
+test:
+  stage: test
+  image: node:9.9.0
+  services:
+  - mongo:4.0
+  variables:
+    MONGO_INITDB_ROOT_USERNAME: myuser
+    MONGO_INITDB_ROOT_PASSWORD: example
+  script:
+    - npm install
+    - npm run test
