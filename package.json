@@ -5,10 +5,12 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "docker-compose build; docker-compose up -d",
-    "test": "jest --setupFiles dotenv/config --coverage --watch",
+    "test": "jest --setupFiles dotenv/config --coverage",
+    "test:dev": "jest --setupFiles dotenv/config --coverage --watch",
     "node:dev": "nodemon --inspect dist/app.js",
     "webpack:watch": "webpack --mode=development --watch",
-    "build": "webpack --mode=production"
+    "build": "webpack --mode=production",
+    "start": "node dist/app.js"
   },
   "author": "Simon Breiter",
   "license": "MIT",
