@@ -12,6 +12,11 @@
   },
   "author": "Simon Breiter",
   "license": "MIT",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-angular"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -38,6 +43,7 @@
     "mongodb": "^3.2.3"
   },
   "devDependencies": {
+    "@commitlint/config-angular": "^7.5.0",
     "@shelf/jest-mongodb": "^1.0.0",
     "babel-loader": "^8.0.5",
     "husky": "^2.1.0",
