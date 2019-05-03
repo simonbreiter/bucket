@@ -46,6 +46,7 @@
     "@commitlint/config-angular": "^7.5.0",
     "@shelf/jest-mongodb": "^1.0.0",
     "babel-loader": "^8.0.5",
+    "commitlint": "^7.5.2",
     "husky": "^2.1.0",
     "jest": "^24.7.1",
     "lint-staged": "^8.1.5",
