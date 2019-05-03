@@ -1,0 +1,29 @@
+version: '3.1'
+services:
+  mongodb:
+    container_name: simple-crm-mongodb
+    restart: always
+    image: mongo:4.0
+    ports:
+        - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: myuser
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: mydb
+    # volumes:
+    #   - ./data:/data/db
+
+  node:
+    container_name: node-docker-node
+    restart: always
+    build: .
+    environment:
+      - MONGODB_HOST=mongodb
+      - API_PORT=3000
+    ports:
+       - "3000:3000"
+    links:
+      - mongodb
+    # volumes:
+    #   - .:/usr/src/node-docker
+    command: nodemon app.js
