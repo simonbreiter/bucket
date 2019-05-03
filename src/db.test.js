@@ -23,7 +23,7 @@ it('should create a collection and one document', async () => {
   let a
   const collection = db.collection('documents')
 
-  collection.insertOne({ a: 1 })
+  await collection.insertOne({ a: 1 })
   a = await collection.find({ a: 1 }).toArray()
 
   expect(a.length).toBe(1)
@@ -33,7 +33,7 @@ it('should create a collection and some documents', async () => {
   let a, b, c
   const collection = db.collection('documents')
 
-  collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }])
+  await collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }])
   a = await collection.find({ a: 3 }).toArray()
   b = await collection.find({ a: 1 }).toArray()
   c = await collection.find({ a: 4 }).toArray()
@@ -49,8 +49,8 @@ it('should update a document', async () => {
   const id = ObjectId()
   const mock = { _id: id, a: 1 }
 
-  collection.insertOne(mock)
-  collection.updateOne(mock, { $set: { b: 1 } })
+  await collection.insertOne(mock)
+  await collection.updateOne(mock, { $set: { b: 1 } })
   a = await collection.findOne({ _id: id })
 
   expect(a).toEqual({ _id: id, a: 1, b: 1 })
