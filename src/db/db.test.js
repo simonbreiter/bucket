@@ -1,4 +1,9 @@
-const { MongoClient, ObjectId } = require('mongodb')
+const {
+  MongoClient,
+  ObjectId,
+  MongoError,
+  mongoErrorContextSymbol
+} = require('mongodb')
 
 let connection
 let db
@@ -11,7 +16,7 @@ beforeEach(async () => {
       useNewUrlParser: true
     }
   )
-  db = await connection.db('mydb')
+  db = await connection.db('db-' + Math.floor(Math.random() + 1000))
 })
 
 afterEach(async () => {
@@ -85,7 +90,6 @@ test('it should match an array', async () => {
 })
 
 test('it should delete documents', async () => {
-  let a
   const collection = db.collection('documents')
   const mock = [
     { _id: ObjectId(), a: true },
@@ -95,12 +99,6 @@ test('it should delete documents', async () => {
 
   await collection.insertMany(mock)
   await collection.deleteMany({ a: false })
-
-  a = await collection
-    .find({
-      a: true
-    })
-    .toArray()
 
   expect(
     await collection
@@ -128,4 +126,109 @@ test('it should limit documents', async () => {
     .toArray()
 
   expect(a.length).toEqual(2)
+})
+
+test('it should validate documents', async () => {
+  await db.createCollection('students', {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: [
+          'name',
+          'year',
+          'major',
+          'gpa',
+          'address.city',
+          'address.street'
+        ],
+        properties: {
+          name: {
+            bsonType: 'string',
+            description: 'must be a string and is required'
+          },
+          gender: {
+            bsonType: 'string',
+            description: 'must be a string and is not required'
+          },
+          year: {
+            bsonType: 'int',
+            minimum: 2017,
+            maximum: 3017,
+            exclusiveMaximum: false,
+            description: 'must be an integer in [ 2017, 3017 ] and is required'
+          },
+          major: {
+            enum: ['Math', 'English', 'Computer Science', 'History', null],
+            description: 'can only be one of the enum values and is required'
+          },
+          gpa: {
+            bsonType: ['double'],
+            minimum: 0,
+            description: 'must be a double and is required'
+          },
+          'address.city': {
+            bsonType: 'string',
+            description: 'must be a string and is required'
+          },
+          'address.street': {
+            bsonType: 'string',
+            description: 'must be a string and is required'
+          }
+        }
+      }
+    }
+  })
+
+  const mock = {
+    _id: ObjectId(),
+    name: 'Muster',
+    gender: 'male',
+    year: 2019,
+    major: 'Math',
+    gpa: 1.2,
+    address: {
+      city: 'Winterthur',
+      street: 'Bahnhofstrasse'
+    }
+  }
+
+  const mock2 = {
+    _id: ObjectId(),
+    gender: 'male',
+    year: 2019,
+    major: 'Math',
+    gpa: -1,
+    address: {
+      city: 'Winterthur',
+      street: 'Bahnhofstrasse'
+    }
+  }
+
+  await db.collection('students').insertOne(mock)
+
+  expect(
+    await db.collection('students').findOne({
+      _id: mock._id
+    })
+  ).toEqual(mock)
+
+  try {
+    await db.collection('students').insertOne(mock2)
+  } catch (e) {
+    expect({ name: e.name, errmsg: e.errmsg }).toEqual({
+      name: 'MongoError',
+      errmsg: 'Document failed validation'
+    })
+  }
+})
+
+test('it should create a collection', async () => {
+  await db.createCollection('foo')
+  await db.createCollection('bar')
+  await db.createCollection('baz')
+  const collections = (await db.collections()).map(
+    collection => collection.s.name
+  )
+  expect(collections).toEqual(expect.arrayContaining(['foo', 'bar', 'baz']))
+  expect(collections).toEqual(expect.arrayContaining(['bar', 'baz', 'foo']))
 })
