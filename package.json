@@ -37,9 +37,6 @@
       ]
     }
   },
-  "jest": {
-    "preset": "@shelf/jest-mongodb"
-  },
   "dependencies": {
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
@@ -51,7 +48,6 @@
   },
   "devDependencies": {
     "@commitlint/config-angular": "^7.5.0",
-    "@shelf/jest-mongodb": "^1.0.1",
     "babel-loader": "^8.0.5",
     "commitlint": "^7.5.2",
     "husky": "^2.2.0",
