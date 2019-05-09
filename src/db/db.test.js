@@ -16,7 +16,7 @@ beforeEach(async () => {
       useNewUrlParser: true
     }
   )
-  db = await connection.db('db-' + Math.floor(Math.random() + 1000))
+  db = await connection.db('db-' + Date.now())
 })
 
 afterEach(async () => {
