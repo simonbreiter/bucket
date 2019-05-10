@@ -1,7 +1,6 @@
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const {
-  buildSchema,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLInt,
@@ -13,32 +12,59 @@ const app = express()
 
 // Resolver
 const hello = () => 'Hello world!'
+const hello2 = () => 'Hello world!2'
+const foo = (_, { bar }) => {
+  return bar
+}
 
-// Schema
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
-    description: 'Possible queries',
-    fields: {
-      hello: {
-        type: GraphQLString,
-        resolve: hello
+let queries = {
+  hello: {
+    type: GraphQLString,
+    resolve: hello
+  }
+}
+
+let mutations = {
+  createFoo: {
+    type: GraphQLString,
+    args: {
+      bar: {
+        type: GraphQLString
       }
-    }
+    },
+    resolve: foo
+  }
+}
+
+/**
+ * Builds and returns new schema
+ */
+const buildSchema = () =>
+  new GraphQLSchema({
+    query: new GraphQLObjectType({
+      name: 'Query',
+      description: 'Possible queries',
+      fields: queries
+    }),
+    mutation: new GraphQLObjectType({
+      name: 'Mutation',
+      description: 'Possible mutations',
+      fields: mutations
+    })
   })
-})
 
 app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema: schema,
+  '/',
+  graphqlHTTP(async (req, res) => ({
+    schema: buildSchema(),
     graphiql: !process.env.TESTING
-  })
+  }))
 )
 
-app.get('/', (req, res) => {
-  res.status(200).send('Hello World!')
-})
+queries.hello2 = {
+  type: GraphQLString,
+  resolve: hello2
+}
 
 if (!process.env.TESTING) {
   app.listen(port, () => console.log(`Server runs on port ${port}!`))

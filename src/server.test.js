@@ -1,21 +1,37 @@
 const request = require('supertest')
 const express = require('express')
-const axios = require('axios')
 const app = require('./server')
 
-test('server is online', () => {
+test('it should allow basic queries', async done => {
+  const expected = { data: { hello: 'Hello world!' } }
   request(app)
-    .get('/')
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send('query { hello }')
     .then(response => {
-      expect(response.statusCode).toBe(200)
+      expect(response.body).toEqual(expected)
+      done()
     })
 })
 
-test('hello world from graphql', async done => {
-  const expected = { data: { hello: 'Hello world!' } }
+test('it should build schema on each api request', async done => {
+  const expected = { data: { hello2: 'Hello world!2' } }
   request(app)
-    .post('/graphql')
-    .send({ query: '{hello}' })
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send('query { hello2 }')
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})
+
+test('it should allow basic mutations', async done => {
+  const expected = { data: { createFoo: 'baz' } }
+  request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send('mutation { createFoo(bar: "baz") }')
     .then(response => {
       expect(response.body).toEqual(expected)
       done()
