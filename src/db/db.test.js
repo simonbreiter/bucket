@@ -13,6 +13,7 @@ beforeEach(async () => {
     `mongodb://myuser:example@${process.env.HOST}`,
     {
       authSource: 'admin',
+      useUnifiedTopology: true,
       useNewUrlParser: true
     }
   )
@@ -222,13 +223,29 @@ test('it should validate documents', async () => {
   }
 })
 
-test('it should create a collection', async () => {
+test('it should create multiple collections', async () => {
   await db.createCollection('foo')
   await db.createCollection('bar')
   await db.createCollection('baz')
-  const collections = (await db.collections()).map(
-    collection => collection.s.name
+
+  const collections = (await db.listCollections().toArray()).map(collection => {
+    return collection.name
+  })
+  expect(await collections).toEqual(
+    expect.arrayContaining(['bar', 'baz', 'foo'])
   )
-  expect(collections).toEqual(expect.arrayContaining(['foo', 'bar', 'baz']))
-  expect(collections).toEqual(expect.arrayContaining(['bar', 'baz', 'foo']))
+})
+
+test('it should return numbers of collections', async () => {
+  await db.createCollection('foo')
+  await db.createCollection('bar')
+  await db.createCollection('baz')
+
+  const collections = (await db.listCollections().toArray()).map(collection => {
+    return collection.name
+  })
+
+  const arr = await db.listCollections().toArray()
+
+  expect(await arr.length).toEqual(3)
 })

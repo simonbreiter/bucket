@@ -1,8 +1,7 @@
-version: '3.1'
+version: '3.7'
 services:
-  mongodb:
-    container_name: simple-crm-mongodb
-    restart: always
+  bucket-mongodb:
+    container_name: bucket-mongodb
     image: mongo:4.0
     ports:
         - 27017:27017
@@ -13,17 +12,16 @@ services:
     # volumes:
     #   - ./data:/data/db
 
-  node:
-    container_name: node-docker-node
-    restart: always
-    build: .
+  bucket-node:
+    container_name: bucket-node
+    build:
+      context: .
+      dockerfile: docker/bucket-node/Dockerfile
     environment:
       - MONGODB_HOST=mongodb
       - API_PORT=3000
     ports:
-       - "3000:3000"
-    links:
-      - mongodb
-    # volumes:
-    #   - .:/usr/src/node-docker
-    command: nodemon app.js
+      - 3000:3000
+    volumes:
+      - ./dist:/usr/dist
+      - ./src:/usr/src

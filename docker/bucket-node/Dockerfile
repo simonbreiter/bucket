@@ -1,4 +1,4 @@
-FROM node:9.9.0
+FROM node:12.11.1-alpine
 
 MAINTAINER Simon Breiter hello@simonbreiter.com
 
@@ -14,4 +14,3 @@ COPY webpack.config.js /usr
 EXPOSE 3000
 
 RUN npm install
-RUN npm run build
