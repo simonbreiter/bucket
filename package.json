@@ -4,7 +4,7 @@
   "description": "a bucket for your content",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "parallelshell 'npm run webpack:watch' 'npm run node:dev' 'npm run test:dev'",
+    "dev": "npm-run-all --parallel webpack:watch node:dev test:dev",
     "docker:build": "docker-compose build",
     "docker:up": " docker-compose up --detach --remove-orphans",
     "docker:down": "docker-compose down --volumes --remove-orphans",
@@ -54,8 +54,9 @@
     "jest": "^24.9.0",
     "lint-staged": "^9.4.2",
     "nodemon": "^1.19.4",
-    "parallelshell": "^3.0.2",
+    "npm-run-all": "^4.1.5",
     "prettier-standard": "^15.0.1",
+    "standard": "^14.3.1",
     "supertest": "^4.0.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
