@@ -4,7 +4,7 @@
   "description": "a bucket for your content",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "parallelshell 'npm run webpack:watch' 'npm run node:dev' 'npm run test:dev'",
+    "dev": "npm-run-all --parallel webpack:watch node:dev test:dev",
     "docker:build": "docker-compose build",
     "docker:up": " docker-compose up --detach --remove-orphans",
     "docker:down": "docker-compose down --volumes --remove-orphans",
