@@ -5,8 +5,7 @@ const {
   mongoErrorContextSymbol
 } = require('mongodb')
 
-let connection
-let db
+let connection, db
 
 beforeEach(async () => {
   connection = await MongoClient.connect(
