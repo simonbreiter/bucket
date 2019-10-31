@@ -36,6 +36,11 @@
         "git add"
       ]
   },
+  "standard": {
+    "ignore": [
+      "*.test.js"
+    ]
+  },
   "dependencies": {
     "axios": "^0.19.0",
     "dotenv": "^8.2.0",
