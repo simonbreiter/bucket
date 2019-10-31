@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel webpack:watch node:dev test:dev",
     "docker:build": "docker-compose build",
-    "docker:up": " docker-compose up --detach --remove-orphans",
+    "docker:up": "docker-compose up --detach --remove-orphans --build",
     "docker:down": "docker-compose down --volumes --remove-orphans",
     "docker:start": "docker-compose start",
     "docker:stop": "docker-compose stop",
