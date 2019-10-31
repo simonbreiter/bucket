@@ -13,7 +13,7 @@
     "test": "jest --setupFiles dotenv/config --coverage",
     "test:dev": "jest --setupFiles dotenv/config --coverage --runInBand --watch",
     "node:dev": "nodemon --inspect dist/app.js",
-    "webpack:watch": "webpack --mode=development --watch",
+    "webpack:dev": "webpack --mode=development --watch",
     "build": "webpack --mode=production",
     "start": "node dist/app.js"
   },
