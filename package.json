@@ -11,7 +11,7 @@
     "docker:start": "docker-compose start",
     "docker:stop": "docker-compose stop",
     "test": "jest --setupFiles dotenv/config --coverage",
-    "test:dev": "jest --setupFiles dotenv/config --coverage --runInBand --watchAll",
+    "test:dev": "jest --setupFiles --coverage --runInBand --watchAll",
     "node:dev": "nodemon --inspect dist/app.js",
     "webpack:dev": "webpack --mode=development --watch",
     "build": "webpack --mode=production",
