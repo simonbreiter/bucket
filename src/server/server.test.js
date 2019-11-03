@@ -58,3 +58,30 @@ test('it should get a list of every user', async done => {
       done()
     })
 })
+
+test('it should create a new user', async done => {
+  const expected = {
+    data: {
+      createUser: {
+        id: 'c',
+        name: 'simon'
+      }
+    }
+  }
+  const query = `
+    mutation {
+      createUser(id: "c", name: "simon") {
+        id 
+        name
+      }
+    }
+  `
+  request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(query)
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})

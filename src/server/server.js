@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const {
@@ -63,7 +65,34 @@ const queries = {
 }
 
 // mutations
-const mutations = {}
+const mutations = {
+  createUser: {
+    type: userType,
+    args: {
+      id: {
+        type: GraphQLString
+      },
+      name: {
+        type: GraphQLString
+      }
+    },
+    resolve: (_, { id, name }) => {
+      const user = {
+        id: id,
+        name: name
+      }
+      // Update Database
+      return user
+    }
+  }
+  // createUser: (id, name) => {
+  //   const newUser = {
+  //     id: id,
+  //     name: name
+  //   }
+  //   return fakeDatabase[id].newUser
+  // }
+}
 
 /**
  * Builds and returns new schema
@@ -74,12 +103,12 @@ const buildSchema = () =>
       name: 'Query',
       description: 'Possible queries',
       fields: queries
+    }),
+    mutation: new GraphQLObjectType({
+      name: 'Mutation',
+      description: 'Possible mutations',
+      fields: mutations
     })
-    // mutation: new GraphQLObjectType({
-    //   name: 'Mutation',
-    //   description: 'Possible mutations',
-    //   fields: mutations
-    // })
   })
 
 app.use(
@@ -87,11 +116,11 @@ app.use(
   graphqlHTTP(async (req, res) => ({
     // build schema on every request, so we can modify schema at runtime
     schema: buildSchema(),
-    graphiql: !process.env.TESTING
+    graphiql: !!process.env.TESTING
   }))
 )
 
-if (!process.env.TESTING) {
+if (!!process.env.TESTING) {
   app.listen(port, () => console.log(`Server runs on port ${port}!`))
 }
 
