@@ -8,19 +8,27 @@ const { dbFactory } = require('./db')
 const { userSchema } = require('../models/User')
 
 describe('basic db operations', () => {
-  let db
+  let connection, db
 
   beforeEach(async () => {
-    db = await dbFactory()
+    connection = await MongoClient.connect(
+      `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
+      {
+        authSource: 'admin',
+        useUnifiedTopology: true,
+        useNewUrlParser: true
+      }
+    )
+    db = await connection.db('db-' + Date.now())
   })
 
   afterEach(async () => {
-    await db.db.dropDatabase()
-    await db.connection.close()
+    await db.dropDatabase()
+    await connection.close()
   })
 
   test('it should create a collection and find one document', async () => {
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
     const document = {
       _id: 1,
       a: 1
@@ -34,7 +42,7 @@ describe('basic db operations', () => {
 
   test('it should create a collection and some documents', async () => {
     let a, b, c
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
 
     const documents = [
       {
@@ -70,8 +78,7 @@ describe('basic db operations', () => {
   })
 
   test('it should update a single document', async () => {
-    let a
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
     const id = ObjectId()
     const mock = { _id: id, a: 1 }
 
@@ -85,7 +92,7 @@ describe('basic db operations', () => {
   })
 
   test('it should update many document', async () => {
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
 
     const mock = [
       { _id: 1, a: true },
@@ -105,7 +112,7 @@ describe('basic db operations', () => {
   })
 
   test('it should match an array', async () => {
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
     const mock = [
       { _id: ObjectId(), a: [1, 2] },
       { _id: ObjectId(), a: [2, 3] },
@@ -122,7 +129,7 @@ describe('basic db operations', () => {
   })
 
   test('it should delete documents', async () => {
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
     const mock = [
       { _id: ObjectId(), a: true },
       { _id: ObjectId(), a: false },
@@ -143,7 +150,7 @@ describe('basic db operations', () => {
 
   test('it should limit documents', async () => {
     let a
-    const collection = db.db.collection('documents')
+    const collection = db.collection('documents')
     const mock = [
       { _id: ObjectId(), a: true },
       { _id: ObjectId(), a: false },
@@ -161,7 +168,7 @@ describe('basic db operations', () => {
   })
 
   test('it should validate documents', async () => {
-    await db.db.createCollection('students', {
+    await db.createCollection('students', {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
@@ -237,16 +244,16 @@ describe('basic db operations', () => {
       }
     }
 
-    await db.db.collection('students').insertOne(mock)
+    await db.collection('students').insertOne(mock)
 
     expect(
-      await db.db.collection('students').findOne({
+      await db.collection('students').findOne({
         _id: mock._id
       })
     ).toEqual(mock)
 
     try {
-      await db.db.collection('students').insertOne(mock2)
+      await db.collection('students').insertOne(mock2)
     } catch (e) {
       expect({ name: e.name, errmsg: e.errmsg }).toEqual({
         name: 'MongoError',
@@ -256,11 +263,11 @@ describe('basic db operations', () => {
   })
 
   test('it should create multiple collections', async () => {
-    await db.db.createCollection('foo')
-    await db.db.createCollection('bar')
-    await db.db.createCollection('baz')
+    await db.createCollection('foo')
+    await db.createCollection('bar')
+    await db.createCollection('baz')
 
-    const collections = (await db.db.listCollections().toArray()).map(
+    const collections = (await db.listCollections().toArray()).map(
       collection => {
         return collection.name
       }
@@ -271,17 +278,17 @@ describe('basic db operations', () => {
   })
 
   test('it should return number of collections', async () => {
-    await db.db.createCollection('foo')
-    await db.db.createCollection('bar')
-    await db.db.createCollection('baz')
+    await db.createCollection('foo')
+    await db.createCollection('bar')
+    await db.createCollection('baz')
 
-    const arr = await db.db.listCollections().toArray()
+    const arr = await db.listCollections().toArray()
 
     expect(await arr.length).toEqual(3)
   })
 
   test('it should create a user collection', async () => {
-    const users = await db.db.createCollection('users', userSchema)
+    const users = await db.createCollection('users', userSchema)
     const mock = {
       _id: ObjectId(),
       name: 'Muster'
