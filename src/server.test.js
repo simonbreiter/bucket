@@ -1,37 +1,58 @@
 const request = require('supertest')
-const express = require('express')
 const app = require('./server')
 
-test('it should allow basic queries', async done => {
-  const expected = { data: { hello: 'Hello world!' } }
+test('it should find a specific user', async done => {
+  const expected = {
+    data: {
+      user: {
+        name: 'alice'
+      }
+    }
+  }
+  const query = `
+    query {
+      user(id: "a") {
+        name  
+      } 
+    }
+  `
   request(app)
     .post('/')
     .set('Content-Type', 'application/graphql')
-    .send('query { hello }')
+    .send(query)
     .then(response => {
       expect(response.body).toEqual(expected)
       done()
     })
 })
 
-test('it should build schema on each api request', async done => {
-  const expected = { data: { hello2: 'Hello world!2' } }
+test('it should get a list of every user', async done => {
+  const expected = {
+    data: {
+      users: [
+        {
+          id: 'a',
+          name: 'alice'
+        },
+        {
+          id: 'b',
+          name: 'bob'
+        }
+      ]
+    }
+  }
+  const query = `
+    query {
+      users {
+        id 
+        name
+      }
+    }
+  `
   request(app)
     .post('/')
     .set('Content-Type', 'application/graphql')
-    .send('query { hello2 }')
-    .then(response => {
-      expect(response.body).toEqual(expected)
-      done()
-    })
-})
-
-test('it should allow basic mutations', async done => {
-  const expected = { data: { createFoo: 'baz' } }
-  request(app)
-    .post('/')
-    .set('Content-Type', 'application/graphql')
-    .send('mutation { createFoo(bar: "baz") }')
+    .send(query)
     .then(response => {
       expect(response.body).toEqual(expected)
       done()

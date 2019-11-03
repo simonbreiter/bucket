@@ -4,7 +4,7 @@ services:
     container_name: bucket-mongodb
     image: mongo:4.0
     ports:
-        - 27017:27017
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: myuser
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -18,10 +18,11 @@ services:
       context: .
       dockerfile: docker/bucket-node/Dockerfile
     environment:
-      - MONGODB_HOST=mongodb
+      - MONGODB_HOST=bucket-mongodb
       - API_PORT=3000
+      - TESTING=true
     ports:
       - 3000:3000
-    command: ["npm", "run", "start"]
+    command: ['npm', 'run', 'dev']
     volumes:
       - ./src:/usr/src

@@ -4,37 +4,66 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLInt,
+  GraphQLList,
   GraphQLString
 } = require('graphql')
 
-const port = process.env.PORT || 3000
+const port = process.env.API_PORT
 const app = express()
 
-// Resolver
-const hello = () => 'Hello world!'
-const hello2 = () => 'Hello world!2'
-const foo = (_, { bar }) => {
-  return bar
-}
-
-let queries = {
-  hello: {
-    type: GraphQLString,
-    resolve: hello
+const fakeDatabase = {
+  a: {
+    id: 'a',
+    name: 'alice'
+  },
+  b: {
+    id: 'b',
+    name: 'bob'
   }
 }
 
-let mutations = {
-  createFoo: {
-    type: GraphQLString,
+// Types
+const userType = new GraphQLObjectType({
+  name: 'User',
+  fields: {
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    }
+  }
+})
+
+// Resolver
+const userResolver = (_, { id }) => fakeDatabase[id]
+
+// Queries
+const queries = {
+  user: {
+    type: userType,
     args: {
-      bar: {
+      id: {
         type: GraphQLString
       }
     },
-    resolve: foo
+    resolve: userResolver
+  },
+  users: {
+    type: GraphQLList(userType),
+    resolve: function () {
+      return Object.keys(fakeDatabase).map(el => {
+        return {
+          id: fakeDatabase[el].id,
+          name: fakeDatabase[el].name
+        }
+      })
+    }
   }
 }
+
+// mutations
+const mutations = {}
 
 /**
  * Builds and returns new schema
@@ -45,26 +74,22 @@ const buildSchema = () =>
       name: 'Query',
       description: 'Possible queries',
       fields: queries
-    }),
-    mutation: new GraphQLObjectType({
-      name: 'Mutation',
-      description: 'Possible mutations',
-      fields: mutations
     })
+    // mutation: new GraphQLObjectType({
+    //   name: 'Mutation',
+    //   description: 'Possible mutations',
+    //   fields: mutations
+    // })
   })
 
 app.use(
   '/',
   graphqlHTTP(async (req, res) => ({
+    // build schema on every request, so we can modify schema at runtime
     schema: buildSchema(),
     graphiql: !process.env.TESTING
   }))
 )
-
-queries.hello2 = {
-  type: GraphQLString,
-  resolve: hello2
-}
 
 if (!process.env.TESTING) {
   app.listen(port, () => console.log(`Server runs on port ${port}!`))

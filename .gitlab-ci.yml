@@ -16,7 +16,7 @@ test:
   stage: test
   image: node:9.9.0
   services:
-  - mongo:4.0
+    - mongo:4.0
   variables:
     MONGO_INITDB_ROOT_USERNAME: myuser
     MONGO_INITDB_ROOT_PASSWORD: example

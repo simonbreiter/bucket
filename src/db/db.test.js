@@ -10,7 +10,7 @@ describe('basic db operations', () => {
 
   beforeEach(async () => {
     connection = await MongoClient.connect(
-      `mongodb://myuser:example@${process.env.HOST}`,
+      `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
       {
         // authSource: 'admin',
         useUnifiedTopology: true
@@ -75,7 +75,7 @@ describe('basic db operations', () => {
     expect(await collection.findOne(expectedDocument)).toEqual(expectedDocument)
   })
 
-  test('it should update a document', async () => {
+  test('it should update a single document', async () => {
     let a
     const collection = db.collection('documents')
     const id = ObjectId()
