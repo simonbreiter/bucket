@@ -5,6 +5,7 @@ const {
   mongoErrorContextSymbol
 } = require('mongodb')
 const { dbFactory } = require('./db')
+const { userSchema } = require('../models/User')
 
 describe('basic db operations', () => {
   let db
@@ -277,5 +278,32 @@ describe('basic db operations', () => {
     const arr = await db.db.listCollections().toArray()
 
     expect(await arr.length).toEqual(3)
+  })
+
+  test('it should create a user collection', async () => {
+    const users = await db.db.createCollection('users', userSchema)
+    const mock = {
+      _id: ObjectId(),
+      name: 'Muster'
+    }
+    const mock2 = {
+      _id: ObjectId(),
+      name: 1
+    }
+    await users.insertOne(mock)
+    expect(
+      await users.findOne({
+        _id: mock._id
+      })
+    ).toEqual(mock)
+
+    try {
+      await users.insertOne(mock2)
+    } catch (e) {
+      expect({ name: e.name, errmsg: e.errmsg }).toEqual({
+        name: 'MongoError',
+        errmsg: 'Document failed validation'
+      })
+    }
   })
 })

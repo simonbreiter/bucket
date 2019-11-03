@@ -1,9 +1,16 @@
-const mongoose = require('mongoose')
+const userSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['name'],
+      properties: {
+        name: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        }
+      }
+    }
+  }
+}
 
-const UserSchema = new mongoose.Schema(
-  {
-    username: String,
-    password: String
-  },
-  { timestamps: true }
-)
+module.exports = userSchema

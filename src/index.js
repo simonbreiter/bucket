@@ -1,1 +1,1 @@
-import app from './server/server'
+const server = require('./server/server')
