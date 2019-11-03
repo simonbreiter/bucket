@@ -116,11 +116,11 @@ app.use(
   graphqlHTTP(async (req, res) => ({
     // build schema on every request, so we can modify schema at runtime
     schema: buildSchema(),
-    graphiql: !!process.env.TESTING
+    graphiql: true
   }))
 )
 
-if (!!process.env.TESTING) {
+if (process.env.ENV !== 'dev') {
   app.listen(port, () => console.log(`Server runs on port ${port}!`))
 }
 

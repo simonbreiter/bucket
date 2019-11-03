@@ -20,7 +20,7 @@ services:
     environment:
       - MONGODB_HOST=bucket-mongodb
       - API_PORT=3000
-      - TESTING=true
+      - ENV=dev
 #    ports:
 #      - 3000:3000
     command: ['npm', 'run', 'dev']
