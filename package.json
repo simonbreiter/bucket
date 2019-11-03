@@ -15,7 +15,7 @@
     "node:dev": "nodemon --inspect dist/app.js",
     "webpack:dev": "webpack --mode=development --watch",
     "build": "webpack --mode=production",
-    "start": "node dist/app.js"
+    "start": "node -r dotenv/config dist/app.js"
   },
   "author": "Simon Breiter",
   "license": "MIT",
