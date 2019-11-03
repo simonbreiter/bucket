@@ -20,7 +20,6 @@ test:
   variables:
     MONGO_INITDB_ROOT_USERNAME: myuser
     MONGO_INITDB_ROOT_PASSWORD: example
-    TESTING: true
     MONGODB_HOST: mongo
     API_PORT: 3000
   script:
