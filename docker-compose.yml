@@ -21,8 +21,8 @@ services:
       - MONGODB_HOST=bucket-mongodb
       - API_PORT=3000
       - ENV=dev
-#    ports:
-#      - 3000:3000
+    #    ports:
+    #      - 3000:3000
     command: ['npm', 'run', 'dev']
     volumes:
       - ./src:/usr/src

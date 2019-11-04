@@ -5,7 +5,7 @@ const {
   mongoErrorContextSymbol
 } = require('mongodb')
 const { dbFactory } = require('./db')
-const { userSchema } = require('../models/User')
+const { userSchema } = require('./models/User')
 
 describe('basic db operations', () => {
   let connection, db
@@ -14,9 +14,7 @@ describe('basic db operations', () => {
     connection = await MongoClient.connect(
       `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
       {
-        authSource: 'admin',
-        useUnifiedTopology: true,
-        useNewUrlParser: true
+        useUnifiedTopology: true
       }
     )
     db = await connection.db('mydb')
