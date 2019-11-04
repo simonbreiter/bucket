@@ -19,7 +19,7 @@ describe('basic db operations', () => {
         useNewUrlParser: true
       }
     )
-    db = await connection.db('db-' + Date.now())
+    db = await connection.db('mydb')
   })
 
   afterEach(async () => {
@@ -59,10 +59,11 @@ describe('basic db operations', () => {
       }
     ]
 
-    const expectedDocument = {
-      _id: 2,
-      a: 2
-    }
+    const expectedDocuments = [
+      { _id: 1, a: 1 },
+      { _id: 2, a: 2 },
+      { _id: 3, a: 3 }
+    ]
 
     await collection.insertMany(documents)
 
@@ -74,7 +75,7 @@ describe('basic db operations', () => {
     expect((await collection.find({ a: 1 }).toArray()).length).toBe(1)
     expect((await collection.find({ a: 4 }).toArray()).length).not.toBe(1)
 
-    expect(await collection.findOne(expectedDocument)).toEqual(expectedDocument)
+    expect(await collection.find({}).toArray()).toEqual(expectedDocuments)
   })
 
   test('it should update a single document', async () => {
@@ -288,7 +289,7 @@ describe('basic db operations', () => {
   })
 
   test('it should create a user collection', async () => {
-    const users = await db.createCollection('users', userSchema)
+    const users = await db.createCollection('User', userSchema)
     const mock = {
       _id: ObjectId(),
       name: 'Muster'

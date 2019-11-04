@@ -1,19 +1,44 @@
 const request = require('supertest')
 const app = require('./server')
 
-test('it should find a specific user', async done => {
+const {
+  MongoClient,
+  ObjectId,
+  MongoError,
+  mongoErrorContextSymbol
+} = require('mongodb')
+
+let connection, db
+
+beforeEach(async () => {
+  connection = await MongoClient.connect(
+    `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
+    {
+      useUnifiedTopology: true
+    }
+  )
+  db = await connection.db('mydb')
+})
+
+afterEach(async () => {
+  await db.dropDatabase()
+  await connection.close()
+})
+
+test('it should create a new user', async done => {
   const expected = {
     data: {
-      user: {
-        name: 'alice'
+      createUser: {
+        name: 'simon'
       }
     }
   }
+
   const query = `
-    query {
-      user(id: "a") {
-        name  
-      } 
+    mutation {
+      createUser(name: "simon") {
+        name
+      }
     }
   `
   request(app)
@@ -27,61 +52,93 @@ test('it should find a specific user', async done => {
 })
 
 test('it should get a list of every user', async done => {
+  const query1 = `
+    mutation {
+      createUser(name: "alice") {
+        name
+      }
+    }
+  `
+  const query2 = `
+    mutation {
+      createUser(name: "bob") {
+        name
+      }
+    }
+  `
   const expected = {
     data: {
       users: [
         {
-          id: 'a',
           name: 'alice'
         },
         {
-          id: 'b',
           name: 'bob'
         }
       ]
     }
   }
-  const query = `
+  const queryUsers = `
     query {
       users {
-        id 
         name
       }
     }
   `
-  request(app)
+  await request(app)
     .post('/')
     .set('Content-Type', 'application/graphql')
-    .send(query)
+    .send(query1)
+
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(query2)
+
+  await request(app)
+    .get('/')
+    .set('Content-Type', 'application/graphql')
+    .send(queryUsers)
     .then(response => {
       expect(response.body).toEqual(expected)
       done()
     })
 })
 
-test('it should create a new user', async done => {
-  const expected = {
-    data: {
-      createUser: {
-        id: 'c',
-        name: 'simon'
-      }
-    }
-  }
-  const query = `
-    mutation {
-      createUser(id: "c", name: "simon") {
-        id 
-        name
-      }
-    }
-  `
-  request(app)
-    .post('/')
-    .set('Content-Type', 'application/graphql')
-    .send(query)
-    .then(response => {
-      expect(response.body).toEqual(expected)
-      done()
-    })
-})
+// test('it should find a specific user', async done => {
+//
+//   const createQuery = `
+//     mutation {
+//       createUser(name: "alice") {
+//         name
+//       }
+//     }
+//   `
+//   const query = `
+//     query {
+//       user(_id: "a") {
+//         name
+//       }
+//     }
+//   `
+//   const expected = {
+//     data: {
+//       user: {
+//         name: 'alice'
+//       }
+//     }
+//   }
+//   await request(app)
+//     .post('/')
+//     .set('Content-Type', 'application/graphql')
+//     .send(createQuery)
+//
+//   await request(app)
+//     .post('/')
+//     .set('Content-Type', 'application/graphql')
+//     .send(query)
+//     .then(response => {
+//       expect(response.body).toEqual(expected)
+//       done()
+//     })
+// })

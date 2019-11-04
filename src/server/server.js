@@ -9,26 +9,21 @@ const {
   GraphQLList,
   GraphQLString
 } = require('graphql')
+const {
+  MongoClient,
+  ObjectId,
+  MongoError,
+  mongoErrorContextSymbol
+} = require('mongodb')
 
 const port = process.env.API_PORT
 const app = express()
-
-const fakeDatabase = {
-  a: {
-    id: 'a',
-    name: 'alice'
-  },
-  b: {
-    id: 'b',
-    name: 'bob'
-  }
-}
 
 // Types
 const userType = new GraphQLObjectType({
   name: 'User',
   fields: {
-    id: {
+    _id: {
       type: GraphQLString
     },
     name: {
@@ -38,14 +33,30 @@ const userType = new GraphQLObjectType({
 })
 
 // Resolver
-const userResolver = (_, { id }) => fakeDatabase[id]
+const userResolver = async (_, { _id }) => {
+  const connection = await MongoClient.connect(
+    `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
+    {
+      useUnifiedTopology: true
+    }
+  )
+  const db = await connection.db('mydb')
+  const users = db.collection('Users')
+  const result = await users.findOne({
+    _id: ObjectId(_id)
+  })
+
+  await connection.close()
+
+  return result
+}
 
 // Queries
 const queries = {
   user: {
     type: userType,
     args: {
-      id: {
+      _id: {
         type: GraphQLString
       }
     },
@@ -53,13 +64,21 @@ const queries = {
   },
   users: {
     type: GraphQLList(userType),
-    resolve: function () {
-      return Object.keys(fakeDatabase).map(el => {
-        return {
-          id: fakeDatabase[el].id,
-          name: fakeDatabase[el].name
+    resolve: async () => {
+      const connection = await MongoClient.connect(
+        `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
+        {
+          useUnifiedTopology: true
         }
-      })
+      )
+      const db = await connection.db('mydb')
+      const users = db.collection('Users')
+      const result = await users.find({}).toArray()
+      // console.log(result)
+
+      await connection.close()
+
+      return result
     }
   }
 }
@@ -69,29 +88,29 @@ const mutations = {
   createUser: {
     type: userType,
     args: {
-      id: {
-        type: GraphQLString
-      },
       name: {
         type: GraphQLString
       }
     },
-    resolve: (_, { id, name }) => {
+    resolve: async (_, { name }) => {
       const user = {
-        id: id,
         name: name
       }
-      // Update Database
+      const connection = await MongoClient.connect(
+        `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
+        {
+          useUnifiedTopology: true
+        }
+      )
+      const db = await connection.db('mydb')
+      const users = db.collection('Users')
+
+      await users.insertOne(user)
+      await connection.close()
+
       return user
     }
   }
-  // createUser: (id, name) => {
-  //   const newUser = {
-  //     id: id,
-  //     name: name
-  //   }
-  //   return fakeDatabase[id].newUser
-  // }
 }
 
 /**
