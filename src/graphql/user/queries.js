@@ -25,7 +25,7 @@ const userResolver = async (_, { _id }) => {
     _id: ObjectId(_id)
   })
 
-  await connection.close()
+  // await connection.close()
 
   return result
 }
@@ -41,7 +41,7 @@ const usersResolver = async () => {
   const users = db.collection('Users')
   const result = await users.find({}).toArray()
 
-  await connection.close()
+  // await connection.close()
 
   return result
 }

@@ -26,7 +26,7 @@ const createUserResolver = async (_, { name }) => {
   const users = db.collection('Users')
 
   await users.insertOne(user)
-  await connection.close()
+  // await connection.close()
 
   return user
 }
