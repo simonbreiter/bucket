@@ -1,16 +1,6 @@
-const {
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLString
-} = require('graphql')
-const {
-  MongoClient,
-  ObjectId,
-  MongoError,
-  mongoErrorContextSymbol
-} = require('mongodb')
+const { GraphQLList, GraphQLString } = require('graphql')
+const { MongoClient, ObjectId } = require('mongodb')
+const { userType } = require('./type')
 
 const userResolver = async (_, { _id }) => {
   const connection = await MongoClient.connect(
@@ -46,7 +36,22 @@ const usersResolver = async () => {
   return result
 }
 
+const queries = {
+  user: {
+    type: userType,
+    args: {
+      _id: {
+        type: GraphQLString
+      }
+    },
+    resolve: userResolver
+  },
+  users: {
+    type: GraphQLList(userType),
+    resolve: usersResolver
+  }
+}
+
 module.exports = {
-  userResolver,
-  usersResolver
+  queries
 }

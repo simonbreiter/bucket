@@ -1,16 +1,6 @@
-const {
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLString
-} = require('graphql')
-const {
-  MongoClient,
-  ObjectId,
-  MongoError,
-  mongoErrorContextSymbol
-} = require('mongodb')
+const { GraphQLString } = require('graphql')
+const { MongoClient } = require('mongodb')
+const { userType } = require('./type')
 
 const createUserResolver = async (_, { name }) => {
   const user = {
@@ -31,6 +21,18 @@ const createUserResolver = async (_, { name }) => {
   return user
 }
 
+const mutations = {
+  createUser: {
+    type: userType,
+    args: {
+      name: {
+        type: GraphQLString
+      }
+    },
+    resolve: createUserResolver
+  }
+}
+
 module.exports = {
-  createUserResolver
+  mutations
 }
