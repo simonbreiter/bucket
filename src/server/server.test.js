@@ -7,16 +7,12 @@ const {
   MongoError,
   mongoErrorContextSymbol
 } = require('mongodb')
+const { connectToDB } = require('../db/db')
 
 let connection, db
 
 beforeEach(async () => {
-  connection = await MongoClient.connect(
-    `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
-    {
-      useUnifiedTopology: true
-    }
-  )
+  connection = await connectToDB()
   db = await connection.db('mydb')
 })
 

@@ -1,22 +1,12 @@
-const {
-  MongoClient,
-  ObjectId,
-  MongoError,
-  mongoErrorContextSymbol
-} = require('mongodb')
-const { dbFactory } = require('./db')
+const { ObjectId } = require('mongodb')
 const { userSchema } = require('./models/User')
+const { connectToDB } = require('./db')
 
 describe('basic db operations', () => {
   let connection, db
 
   beforeEach(async () => {
-    connection = await MongoClient.connect(
-      `mongodb://myuser:example@${process.env.MONGODB_HOST}`,
-      {
-        useUnifiedTopology: true
-      }
-    )
+    connection = await connectToDB()
     db = await connection.db('mydb')
   })
 
