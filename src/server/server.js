@@ -16,7 +16,7 @@ app.use(
       schema: buildSchema(),
       context: {
         connection: await connection,
-        db: await connection.db('mydb')
+        db: await connection.db(process.env.ENV === 'dev' ? 'dev' : 'bucket')
       },
       graphiql: true
     }

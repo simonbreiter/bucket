@@ -13,7 +13,7 @@ let connection, db
 
 beforeEach(async () => {
   connection = await connectToDB()
-  db = await connection.db('mydb')
+  db = await connection.db('dev')
 })
 
 afterEach(async () => {
