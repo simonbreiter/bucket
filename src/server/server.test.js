@@ -1,12 +1,5 @@
 const request = require('supertest')
 const app = require('./server')
-
-const {
-  MongoClient,
-  ObjectId,
-  MongoError,
-  mongoErrorContextSymbol
-} = require('mongodb')
 const { connectToDB } = require('../db/db')
 
 let connection, db
