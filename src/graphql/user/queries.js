@@ -1,18 +1,16 @@
 const { GraphQLList, GraphQLString } = require('graphql')
 const { userType } = require('./type')
 
-const userResolver = async (obj, { _id }, context) => {
-  const users = context.db.collection('Users')
-  const result = await users.findOne({
-    _id: _id
+const userResolver = (obj, { _id, name }, context) => {
+  const users = context.db.collection('User')
+  return users.findOne({
+    $or: [{ _id }, { name }]
   })
-  return result
 }
 
-const usersResolver = async (obj, args, context) => {
-  const users = context.db.collection('Users')
-  const result = await users.find({}).toArray()
-  return result
+const usersResolver = (obj, args, context) => {
+  const users = context.db.collection('User')
+  return users.find({}).toArray()
 }
 
 const queries = {
@@ -20,6 +18,9 @@ const queries = {
     type: userType,
     args: {
       _id: {
+        type: GraphQLString
+      },
+      name: {
         type: GraphQLString
       }
     },

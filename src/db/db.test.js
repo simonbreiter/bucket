@@ -1,13 +1,11 @@
 const { ObjectId } = require('mongodb')
-const { userSchema } = require('./models/User')
 const { connectToDB } = require('./db')
 
 describe('basic db operations', () => {
   let connection, db
 
   beforeEach(async () => {
-    connection = await connectToDB()
-    db = await connection.db('dev')
+    ;({ connection, db } = await connectToDB())
   })
 
   afterEach(async () => {
@@ -266,40 +264,48 @@ describe('basic db operations', () => {
     )
   })
 
-  test('it should return number of collections', async () => {
-    await db.createCollection('foo')
-    await db.createCollection('bar')
-    await db.createCollection('baz')
+  // test('it should return number of collections', async () => {
+  //   await db.createCollection('foo')
+  //   await db.createCollection('bar')
+  //   await db.createCollection('baz')
+  //
+  //   const arr = await db.listCollections().toArray()
+  //
+  //   expect(await arr.length).toEqual(3)
+  // })
 
-    const arr = await db.listCollections().toArray()
+  test('it should throw an error if schema validation failes', async () => {
+    // await db.createCollection('User', userSchema)
 
-    expect(await arr.length).toEqual(3)
-  })
+    const users = await db.collection('User')
 
-  test('it should create a user collection', async () => {
-    const users = await db.createCollection('User', userSchema)
     const mock = {
       _id: ObjectId(),
-      name: 'Muster'
+      name: 'testname',
+      password: 'testpassword'
     }
-    const mock2 = {
-      _id: ObjectId(),
-      name: 1
-    }
-    await users.insertOne(mock)
-    expect(
-      await users.findOne({
-        _id: mock._id
-      })
-    ).toEqual(mock)
 
     try {
-      await users.insertOne(mock2)
+      await users.insertOne(mock)
     } catch (e) {
       expect({ name: e.name, errmsg: e.errmsg }).toEqual({
         name: 'MongoError',
         errmsg: 'Document failed validation'
       })
     }
+  })
+
+  test('it should insert a user', async () => {
+    // await db.createCollection('User', userSchema)
+
+    const users = await db.collection('User')
+
+    const mock = {
+      _id: ObjectId(),
+      name: 'foo',
+      password: 'bar'
+    }
+
+    await users.insertOne(mock)
   })
 })

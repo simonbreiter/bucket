@@ -5,8 +5,7 @@ const { connectToDB } = require('../db/db')
 let connection, db
 
 beforeEach(async () => {
-  connection = await connectToDB()
-  db = await connection.db('dev')
+  ;({ connection, db } = await connectToDB())
 })
 
 afterEach(async () => {
@@ -18,15 +17,17 @@ test('it should create a new user', async done => {
   const expected = {
     data: {
       createUser: {
-        name: 'simon'
+        name: 'simon',
+        password: 'foo'
       }
     }
   }
 
   const query = `
     mutation {
-      createUser(name: "simon") {
+      createUser(name: "simon", password: "foo") {
         name
+        password
       }
     }
   `
@@ -43,15 +44,17 @@ test('it should create a new user', async done => {
 test('it should get a list of every user', async done => {
   const query1 = `
     mutation {
-      createUser(name: "alice") {
-        name
+      createUser(name: "alice", password: "foo") {
+        name,
+        password
       }
     }
   `
   const query2 = `
     mutation {
-      createUser(name: "bob") {
-        name
+      createUser(name: "bob", password: "bar") {
+        name,
+        password
       }
     }
   `
@@ -94,40 +97,39 @@ test('it should get a list of every user', async done => {
     })
 })
 
-// test('it should find a specific user', async done => {
-//
-//   const createQuery = `
-//     mutation {
-//       createUser(name: "alice") {
-//         name
-//       }
-//     }
-//   `
-//   const query = `
-//     query {
-//       user(_id: "a") {
-//         name
-//       }
-//     }
-//   `
-//   const expected = {
-//     data: {
-//       user: {
-//         name: 'alice'
-//       }
-//     }
-//   }
-//   await request(app)
-//     .post('/')
-//     .set('Content-Type', 'application/graphql')
-//     .send(createQuery)
-//
-//   await request(app)
-//     .post('/')
-//     .set('Content-Type', 'application/graphql')
-//     .send(query)
-//     .then(response => {
-//       expect(response.body).toEqual(expected)
-//       done()
-//     })
-// })
+test('it should find a specific user', async done => {
+  const createQuery = `
+    mutation {
+      createUser(name: "alice", password: "foo") {
+        name
+      }
+    }
+  `
+  const query = `
+    query {
+      user(name: "alice") {
+        name
+      }
+    }
+  `
+  const expected = {
+    data: {
+      user: {
+        name: 'alice'
+      }
+    }
+  }
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(createQuery)
+
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(query)
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})

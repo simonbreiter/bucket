@@ -10,13 +10,13 @@ const { connectToDB } = require('../db/db')
 app.use(
   '/',
   graphqlHTTP(async (req, res) => {
-    const connection = await connectToDB()
+    const { connection, db } = await connectToDB()
     return {
       // build new schema on each request, so we can modify it at runtime
       schema: buildSchema(),
       context: {
         connection: await connection,
-        db: await connection.db(process.env.ENV === 'dev' ? 'dev' : 'bucket')
+        db: await db
       },
       graphiql: true
     }

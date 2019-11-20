@@ -1,5 +1,4 @@
 const { GraphQLObjectType, GraphQLSchema } = require('graphql')
-
 const { mutations } = require('../graphql/user/mutations')
 const { queries } = require('../graphql/user/queries')
 

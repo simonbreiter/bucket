@@ -5,8 +5,7 @@ describe('mongodb helper functions', () => {
   let connection, db
 
   beforeEach(async () => {
-    connection = await connectToDB()
-    db = await connection.db('mydb')
+    ;({ connection, db } = await connectToDB())
   })
 
   afterEach(async () => {

@@ -8,7 +8,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: myuser
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: mydb
     # volumes:
     #   - ./data:/data/db
 
