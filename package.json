@@ -15,6 +15,7 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "node:dev": "nodemon --inspect dist/app.js",
     "webpack:dev": "webpack --mode=development --watch",
+    "prettier": "prettier-standard",
     "build": "webpack --mode=production",
     "start": "node -r dotenv/config dist/app.js"
   },
