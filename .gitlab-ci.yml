@@ -23,6 +23,7 @@ test:
     ENV: dev
     MONGODB_HOST: mongo
     API_PORT: 3000
+    JWT_SECRET: secret
   script:
     - npm install
     - npm run test
