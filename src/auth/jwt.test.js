@@ -1,3 +1,4 @@
+const { JsonWebTokenError } = require('jsonwebtoken')
 const { createJWToken, verifyJWTToken } = require('./jwt')
 
 describe('auth tests', () => {
@@ -9,5 +10,16 @@ describe('auth tests', () => {
     const verifiedToken = await verifyJWTToken(token)
 
     expect(verifiedToken.data).toEqual('foo')
+  })
+
+  test('it should throw an error if a token has been tampered', async () => {
+    const token = createJWToken({
+      maxAge: 10,
+      sessionData: 'foo'
+    })
+
+    expect(await verifyJWTToken(token + 'asdf')).toEqual(
+      new JsonWebTokenError('invalid signature')
+    )
   })
 })

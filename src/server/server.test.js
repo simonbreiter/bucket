@@ -1,6 +1,7 @@
 const request = require('supertest')
 const app = require('./server')
 const { connectToDB } = require('../db/db')
+const { createJWToken } = require('../auth/jwt')
 
 let connection, db
 
@@ -128,6 +129,90 @@ test('it should find a specific user', async done => {
     .post('/')
     .set('Content-Type', 'application/graphql')
     .send(query)
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})
+
+test('it should create a token', async done => {
+  const createQuery = `
+    mutation {
+      createUser(name: "alice", password: "foo") {
+        name
+      }
+    }
+  `
+  const loginQuery = `
+    mutation {
+      loginUser(name: "alice", password: "foo") {
+        token
+      }
+    }
+  `
+  const token = createJWToken({
+    maxAge: 10,
+    sessionData: 'alice'
+  })
+  const expected = {
+    data: {
+      loginUser: {
+        token: token
+      }
+    }
+  }
+
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(createQuery)
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(loginQuery)
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})
+
+test('it should verify a token', async done => {
+  const createQuery = `
+    mutation {
+      createUser(name: "alice", password: "foo") {
+        name
+      }
+    }
+  `
+  const loginQuery = `
+    mutation {
+      loginUser(name: "alice", password: "foo") {
+        token
+      }
+    }
+  `
+  const token = createJWToken({
+    maxAge: 10,
+    sessionData: 'alice'
+  })
+  const expected = {
+    data: {
+      loginUser: {
+        token: token
+      }
+    }
+  }
+
+  await request(app)
+    .post('/')
+    .set('Authorization', `bearer ${token}asdf`)
+    .set('Content-Type', 'application/graphql')
+    .send(createQuery)
+
+  await request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(loginQuery)
     .then(response => {
       expect(response.body).toEqual(expected)
       done()

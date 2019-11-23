@@ -22,7 +22,7 @@ function verifyJWTToken (token) {
         resolve(decodedToken)
       }
     })
-  })
+  }).catch(err => err)
 }
 
 module.exports = {

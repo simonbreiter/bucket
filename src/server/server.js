@@ -5,18 +5,21 @@ const graphqlHTTP = require('express-graphql')
 const port = process.env.API_PORT
 const app = express()
 const { buildSchema } = require('../graphql/schema')
-const { connectToDB } = require('../db/db')
+const { attachConnection } = require('../middleware/attachConnection')
+const { identifyUser } = require('../middleware/identifyUser')
+
+app.use(attachConnection)
+app.use(identifyUser)
 
 app.use(
   '/',
   graphqlHTTP(async (req, res) => {
-    const { connection, db } = await connectToDB()
     return {
       // build new schema on each request, so we can modify it at runtime
       schema: buildSchema(),
       context: {
-        connection: await connection,
-        db: await db
+        connection: res.locals.connection,
+        db: res.locals.db
       },
       graphiql: true
     }
