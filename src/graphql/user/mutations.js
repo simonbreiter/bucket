@@ -9,8 +9,13 @@ const createUserResolver = async (obj, { name, password }, context) => {
     password: password
   }
   const users = context.db.collection('User')
-  await users.insertOne(user)
-  return user
+
+  if ((await users.find({ name: name }).toArray()).length !== 0) {
+    throw new Error('User already exists')
+  } else {
+    await users.insertOne(user)
+    return user
+  }
 }
 
 const loginUserResolver = (obj, { name, password }, context) => {
