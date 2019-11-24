@@ -30,7 +30,7 @@ const loginUserResolver = (obj, { name, password }, context) => {
   })
 }
 
-const mutations = {
+const userMutations = {
   createUser: {
     type: userType,
     args: {
@@ -58,5 +58,5 @@ const mutations = {
 }
 
 module.exports = {
-  mutations
+  userMutations
 }

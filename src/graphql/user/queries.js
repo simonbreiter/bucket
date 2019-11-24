@@ -13,7 +13,7 @@ const usersResolver = (obj, args, context) => {
   return users.find({}).toArray()
 }
 
-const queries = {
+const userQueries = {
   user: {
     type: userType,
     args: {
@@ -33,5 +33,5 @@ const queries = {
 }
 
 module.exports = {
-  queries
+  userQueries
 }
