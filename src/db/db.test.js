@@ -264,19 +264,7 @@ describe('basic db operations', () => {
     )
   })
 
-  // test('it should return number of collections', async () => {
-  //   await db.createCollection('foo')
-  //   await db.createCollection('bar')
-  //   await db.createCollection('baz')
-  //
-  //   const arr = await db.listCollections().toArray()
-  //
-  //   expect(await arr.length).toEqual(3)
-  // })
-
   test('it should throw an error if schema validation failes', async () => {
-    // await db.createCollection('User', userSchema)
-
     const users = await db.collection('User')
 
     const mock = {
@@ -296,8 +284,6 @@ describe('basic db operations', () => {
   })
 
   test('it should insert a user', async () => {
-    // await db.createCollection('User', userSchema)
-
     const users = await db.collection('User')
 
     const mock = {
