@@ -283,15 +283,86 @@ describe('basic db operations', () => {
     }
   })
 
-  test('it should insert a user', async () => {
-    const users = await db.collection('User')
+  // test('it should insert a user', async () => {
+  //   const users = await db.collection('User')
+  //
+  //   const mock = {
+  //     _id: ObjectId(),
+  //     name: 'foo',
+  //     password: 'bar'
+  //   }
+  //
+  //   await users.insertOne(mock)
+  // })
 
-    const mock = {
-      _id: ObjectId(),
-      name: 'foo',
-      password: 'bar'
-    }
+  test('it should aggregate data', async () => {
+    const users = await db.collection('users')
+    const posts = await db.collection('posts')
 
-    await users.insertOne(mock)
+    const userMocks = [
+      { _id: 1, name: 'foo1', password: 'bar1' },
+      { _id: 2, name: 'foo2', password: 'bar2' },
+      { _id: 3, name: 'foo3', password: 'bar3' }
+    ]
+
+    const postMocks = [
+      { _id: 4, title: 'foo', user: 1 },
+      { _id: 5, title: 'bar', user: 2 },
+      { _id: 6, title: 'baz', user: 3 }
+    ]
+
+    const expectedData = [
+      {
+        _id: 4,
+        title: 'foo',
+        user: [
+          {
+            _id: 1,
+            name: 'foo1',
+            password: 'bar1'
+          }
+        ]
+      },
+      {
+        _id: 5,
+        title: 'bar',
+        user: [
+          {
+            _id: 2,
+            name: 'foo2',
+            password: 'bar2'
+          }
+        ]
+      },
+      {
+        _id: 6,
+        title: 'baz',
+        user: [
+          {
+            _id: 3,
+            name: 'foo3',
+            password: 'bar3'
+          }
+        ]
+      }
+    ]
+
+    await users.insertMany(userMocks)
+    await posts.insertMany(postMocks)
+
+    expect(
+      await posts
+        .aggregate([
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user',
+              foreignField: '_id',
+              as: 'user'
+            }
+          }
+        ])
+        .toArray()
+    ).toEqual(expectedData)
   })
 })
