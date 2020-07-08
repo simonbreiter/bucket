@@ -8,6 +8,7 @@ Bucket is an API for your content. It lets you store your data in "buckets" and 
 ## Development
 
 Create a `.env` file with at least this content:
+
 | Name     | Values            | Default |
 | -------- | ----------------- | ------- |
 | ENV      | `dev` or `prod`   | `dev`  |
@@ -19,5 +20,5 @@ Create a `.env` file with at least this content:
 
 To run bucket change the line in docker-compose to:
 ```yml
-    command: ['npm', 'run', 'start']
+command: ['npm', 'run', 'start']
 ```
