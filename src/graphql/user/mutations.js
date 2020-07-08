@@ -24,7 +24,7 @@ const loginUserResolver = (obj, { name, password }, context) => {
     return {
       token: createJWToken({
         maxAge: 10,
-        sessionData: name
+        payload: name
       })
     }
   })

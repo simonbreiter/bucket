@@ -1,7 +1,6 @@
 const { GraphQLObjectType, GraphQLSchema } = require('graphql')
-const { bucketMutations } = require('../graphql/bucket/mutations')
-const { userMutations } = require('../graphql/user/mutations')
 const { userQueries } = require('../graphql/user/queries')
+const { userMutations } = require('../graphql/user/mutations')
 
 /**
  * Builds and returns new schema
@@ -19,10 +18,7 @@ const buildSchema = query => {
       name: 'Mutation',
       description: 'Possible mutations',
       fields: {
-        ...userMutations,
-        ...(query.graphql.function === 'createBucket'
-          ? bucketMutations(query)
-          : {})
+        ...userMutations
       }
     })
   })

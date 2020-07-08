@@ -5,7 +5,7 @@ describe('auth tests', () => {
   test('it should create and verify a JWT token', async () => {
     const token = createJWToken({
       maxAge: 10,
-      sessionData: 'foo'
+      payload: 'foo'
     })
     const verifiedToken = await verifyJWTToken(token)
 
@@ -15,7 +15,7 @@ describe('auth tests', () => {
   test('it should throw an error if a token has been tampered', async () => {
     const token = createJWToken({
       maxAge: 10,
-      sessionData: 'foo'
+      payload: 'foo'
     })
 
     expect(await verifyJWTToken(token + 'asdf')).toEqual(

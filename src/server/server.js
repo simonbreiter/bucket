@@ -7,11 +7,13 @@ const app = express()
 const { buildSchema } = require('../graphql/schema')
 const { attachConnection } = require('../middleware/attachConnection')
 const { identifyUser } = require('../middleware/identifyUser')
-const { parseGraphQL } = require('../middleware/parseGraphQL')
 
 app.use(attachConnection)
 app.use(identifyUser)
-app.use(parseGraphQL)
+
+// app.get('/schema', (req, res) => {
+//   res.send('Hello world!')
+// })
 
 app.use(
   '/',

@@ -14,6 +14,34 @@ afterEach(async () => {
   await connection.close()
 })
 
+test('it should create a new user', async done => {
+  const expected = {
+    data: {
+      createUser: {
+        name: 'simon',
+        password: 'foo'
+      }
+    }
+  }
+
+  const query = `
+    mutation {
+      createUser(name: "simon", password: "foo") {
+        name
+        password
+      }
+    }
+  `
+  request(app)
+    .post('/')
+    .set('Content-Type', 'application/graphql')
+    .send(query)
+    .then(response => {
+      expect(response.body).toEqual(expected)
+      done()
+    })
+})
+
 test('it should create a token', async done => {
   const createQuery = `
     mutation {
@@ -31,7 +59,7 @@ test('it should create a token', async done => {
   `
   const token = createJWToken({
     maxAge: 10,
-    sessionData: 'alice'
+    payload: 'alice'
   })
   const expected = {
     data: {

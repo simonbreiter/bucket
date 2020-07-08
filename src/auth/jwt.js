@@ -1,9 +1,16 @@
 const jwt = require('jsonwebtoken')
 
-function createJWToken ({ maxAge = 3600, sessionData, algorithm = 'HS256' }) {
+/**
+ *  Create a JWT token.
+ * @param maxAge
+ * @param payload
+ * @param algorithm
+ * @returns {undefined|*}
+ */
+function createJWToken ({ maxAge = 3600, payload, algorithm = 'HS256' }) {
   return jwt.sign(
     {
-      data: sessionData
+      data: payload
     },
     process.env.JWT_SECRET,
     {
@@ -13,6 +20,11 @@ function createJWToken ({ maxAge = 3600, sessionData, algorithm = 'HS256' }) {
   )
 }
 
+/**
+ * Verify a JWT token.
+ * @param token
+ * @returns {Promise<unknown>}
+ */
 function verifyJWTToken (token) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
