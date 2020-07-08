@@ -10,7 +10,7 @@
     "docker:down": "docker-compose down --volumes --remove-orphans",
     "docker:start": "docker-compose start",
     "docker:stop": "docker-compose stop",
-    "test": "jest --setupFiles dotenv/config --coverage --detectOpenHandles",
+    "test": "jest --coverage --detectOpenHandles",
     "test:dev": "jest --coverage --runInBand --watchAll",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "node:dev": "nodemon --inspect dist/app.js",
