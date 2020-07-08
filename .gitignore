@@ -1,4 +1,5 @@
 .vscode
+.env
 coverage
 node_modules
 dist
