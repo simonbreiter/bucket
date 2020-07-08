@@ -7,7 +7,7 @@ Bucket is an API for your content. It lets you store your data in "buckets" and 
 
 ## Development
 
-Create a `.env` file with at least this content:
+Run `npm install` and create a `.env` file with at least this content:
 
 | Name     | Values            | Default |
 | -------- | ----------------- | ------- |
@@ -15,6 +15,12 @@ Create a `.env` file with at least this content:
 | MONGODB_HOST | `bucket-mongodb` | `bucket-mongodb` |
 | API_PORT | 3000 | 3000 |
 | JWT_SECRET | `secret` | `secret` |
+
+after that you can start the development environment with:
+
+```bash
+npm run docker:up
+```
 
 ## Usage
 
