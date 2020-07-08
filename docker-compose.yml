@@ -16,13 +16,10 @@ services:
     build:
       context: .
       dockerfile: docker/bucket-node/Dockerfile
-    environment:
-      - MONGODB_HOST=bucket-mongodb
-      - API_PORT=3000
-      - ENV=dev
-      - JWT_SECRET=secret
-    #    ports:
-    #      - 3000:3000
+    env_file: .env
+    ports:
+      - 3000:3000
     command: ['npm', 'run', 'dev']
     volumes:
+      - ./.env:/usr/.env
       - ./src:/usr/src

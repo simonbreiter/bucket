@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel webpack:dev node:dev test:dev",
     "docker:build": "docker-compose build",
-    "docker:up": "docker-compose up --detach --remove-orphans --build",
+    "docker:up": "docker-compose up --detach --remove-orphans",
     "docker:down": "docker-compose down --volumes --remove-orphans",
     "docker:start": "docker-compose start",
     "docker:stop": "docker-compose stop",
@@ -17,7 +17,7 @@
     "webpack:dev": "webpack --mode=development --watch",
     "prettier": "prettier-standard",
     "build": "webpack --mode=production",
-    "start": "node -r dotenv/config dist/app.js"
+    "start": "node dist/app.js"
   },
   "author": "Simon Breiter",
   "license": "MIT",
