@@ -19,12 +19,12 @@ Run `npm install` and create a `.env` file with at least this content:
 after that you can start the development environment with:
 
 ```bash
-npm run docker:up
+npm run docker:dev:up
 ```
 
 ## Usage
 
-To run bucket change the line in docker-compose to:
-```yml
-command: ['npm', 'run', 'start']
+To run bucket in production with docker run:
+```bash
+npm run docker:prod:up
 ```

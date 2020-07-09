@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  bucket-mongodb:
+    container_name: bucket-mongodb
+    image: mongo:4.0
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: myuser
+      MONGO_INITDB_ROOT_PASSWORD: example
+    # volumes:
+    #   - ./data:/data/db
+
+  bucket-node:
+    container_name: bucket-node
+    build:
+      context: .
+      dockerfile: docker/bucket-node/Dockerfile
+    env_file: .env
+    ports:
+      - 3000:3000
+    command: ['npm', 'run', 'start']
+    volumes:
+      - ./.env:/usr/.env
+      - ./src:/usr/src
