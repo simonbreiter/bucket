@@ -11,7 +11,7 @@ stages:
 
 build:
   stage: build
-  image: node:9.9.0
+  image: node:12.11.1
   artifacts:
     paths:
       - dist
@@ -21,7 +21,7 @@ build:
 
 test:
   stage: test
-  image: node:9.9.0
+  image: node:12.11.1
   services:
     - mongo:4.0
   variables:
