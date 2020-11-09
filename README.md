@@ -9,12 +9,12 @@ Bucket is an API for your content. It lets you store your data in "buckets" and 
 
 Run `npm install` and create a `.env` file with at least this content:
 
-| Name     | Values            | Default |
-| -------- | ----------------- | ------- |
-| ENV      | `dev` or `prod`   | `dev`  |
+| Name         | Values           | Default          |
+| ------------ | ---------------- | ---------------- |
+| ENV          | `dev` or `prod`  | `dev`            |
 | MONGODB_HOST | `bucket-mongodb` | `bucket-mongodb` |
-| API_PORT | 3000 | 3000 |
-| JWT_SECRET | `secret` | `secret` |
+| API_PORT     | 3000             | 3000             |
+| JWT_SECRET   | `secret`         | `secret`         |
 
 after that you can start the development environment with:
 
@@ -25,6 +25,7 @@ npm run docker:dev:up
 ## Usage
 
 To run bucket in production with docker run:
+
 ```bash
 npm run docker:prod:up
 ```
